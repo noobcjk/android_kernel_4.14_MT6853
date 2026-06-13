@@ -1,4 +1,4 @@
-name: Generate TWRP Device Tree
+name: 构建TWRP Recovery（创建设备树 步骤1）
 
 on:
   workflow_dispatch:
