@@ -11,7 +11,7 @@ on:
         default: false
       APPLY_PATCH:
         type: boolean
-        description: "是否应用 RKSU 内核 Patch（按需开启）"
+        description: "是否应用 RKSU 内核 Patch（按需开启）(仅4.14等内核）"
         required: false
         default: false
     
