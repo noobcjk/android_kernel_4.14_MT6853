@@ -4,13 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       LIBRARY_NAME:
-        description: 'Library name for the device tree'
+        description: '设备树对应的库名称,一般来讲，无需修改'
         required: true
         default: 'Twrp_Device_Generator'
       IMG_URL:
-        description: 'URL to recovery/boot image'
+        description: '原厂recovery或boot的在线下载链接'
         required: true
-        default: 'https://github.com/momo54181/action_build_twrp_device_tree/raw/main/recovery.img'
 
 jobs:
   generate-device-tree:
@@ -18,10 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout repository
+    - name: 拉取仓库代码
       uses: actions/checkout@v4
       
-    - name: Set up environment
+    - name: 配置运行环境
       run: |
         sudo apt-get update
         sudo apt-get install -y \
@@ -32,29 +31,29 @@ jobs:
           zip \
           unzip
         
-    - name: Install TWRP generator
+    - name: 安装TWRP设备树生成工具
       run: |
         pip3 install --upgrade twrpdtgen
         
-    - name: Download recovery image
+    - name: 下载recovery/boot镜像
       run: |
         wget -O recovery.img "${{ github.event.inputs.IMG_URL }}"
         file recovery.img || true  # Display file info for debugging
       
-    - name: Generate device tree
+    - name: 生成设备树
       run: |
         mkdir -p device_tree_output
         python3 -m twrpdtgen \
           -o device_tree_output \
           recovery.img
         
-    - name: Compress device tree
+    - name: 压缩设备树文件
       run: |
         cd device_tree_output
         zip -r ../DeviceTree_${{ github.run_number }}.zip .
         cd ..
         
-    - name: Create release with device tree
+    - name: 上传设备树并创建版本发布
       uses: softprops/action-gh-release@v1
       with:
         files: DeviceTree_${{ github.run_number }}.zip
