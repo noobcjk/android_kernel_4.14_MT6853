@@ -111,10 +111,6 @@ jobs:
 
         # 第一步：先生成 out/.config（必须放最前面！）
         make -s -j$(nproc --all) O=out ARCH=arm64 $TARGET_DEFCFG
-        # 2. 关闭PERF模块，规避报错文件
-        ./scripts/config --file out/.config --disable CONFIG_PERF_EVENTS
-        # 关键：刷新配置，让关闭操作生效
-        make O=out olddefconfig
         # 第二步：再修改BBR配置
         if [ "${{ github.event.inputs.BBR }}" = "true" ]; then
           echo "启用 BBR..."
@@ -127,7 +123,7 @@ jobs:
         fi
 
         # 第三步：完整编译
-        make -j$(nproc --all) CC="ccache clang" O=out ARCH=arm64 CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILE_ARM32=arm-linux-androideabi- LD=ld.lld
+        make -j$(nproc --all) O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILE_ARM32=arm-linux-androideabi-
 
                 
     - name: 制作Anykernel3卡刷包
