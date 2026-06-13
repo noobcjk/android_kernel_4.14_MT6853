@@ -123,9 +123,10 @@ jobs:
         fi
 
         # 第三步：完整编译
-        make -j$(nproc --all) O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILE_ARM32=arm-linux-androideabi-
+        make -j$(nproc --all) CC="ccache clang" O=out ARCH=arm64 CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILE_ARM32=arm-linux-androideabi- LD=ld.lld
 
-                
+
+               
     - name: 制作Anykernel3卡刷包
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
