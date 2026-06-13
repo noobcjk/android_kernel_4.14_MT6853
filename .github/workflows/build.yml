@@ -19,7 +19,11 @@ on:
         description: "自定义内核源码仓库地址（留空使用kernel_4.14_MT6853仓库）"
         required: false
         default: "https://github.com/sanba0519/android_kernel_4.14_MT6853.git"
-    
+      KERNEL_BRANCH:
+       type: string
+       description: "自定义内核源码分支"
+       required: false
+       
 jobs:
   build:
 
@@ -56,11 +60,10 @@ jobs:
     - name: 下载内核源码
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
+        # 获取用户输入
         USER_REPO="${{ github.event.inputs.KERNEL_REPO }}"
-        if [ -z "$USER_REPO" ];then
-        USER_REPO="https://github.com/sanba0519/android_kernel_4.14_MT6853.git"
-        fi
-        git clone -b RKSU --single-branch "$USER_REPO" android-kernel
+        USER_BRANCH="${{ github.event.inputs.KERNEL_BRANCH }}"
+        git clone -b "$USER_BRANCH" --single-branch "$USER_REPO" android-kernel
         cd android-kernel
 
     - name: 打patch
