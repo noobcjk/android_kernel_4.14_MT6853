@@ -9,7 +9,11 @@ on:
         description: "是否启用 BBR 加速（不了解请不要启用）"
         required: false
         default: false
-
+     APPLY_PATCH:
+        type: boolean
+        description: "是否应用 RKSU 内核 Patch（按需开启）"
+        required: false
+        default: false
     
 jobs:
   build:
@@ -51,6 +55,7 @@ jobs:
         cd android-kernel
 
     - name: 打patch
+      if: ${{ github.event.inputs.APPLY_PATCH == 'true' }}
       run: |
         echo "KSU_LOG: 开始下载并应用 RKSU 官方 4.14 patch"
         
