@@ -9,7 +9,7 @@ on:
         description: "是否启用 BBR 加速（不了解请不要启用）"
         required: false
         default: false
-     APPLY_PATCH:
+      APPLY_PATCH:
         type: boolean
         description: "是否应用 RKSU 内核 Patch（按需开启）"
         required: false
