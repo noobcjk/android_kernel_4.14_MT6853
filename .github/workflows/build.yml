@@ -111,7 +111,8 @@ jobs:
 
         # 第一步：先生成 out/.config（必须放最前面！）
         make -s -j$(nproc --all) O=out ARCH=arm64 $TARGET_DEFCFG
-
+        # 新增：修复trace_event_perf.c重定义报错
+        sed -i '433 s/event/perf_event_ptr/g' kernel/trace/trace_event_perf.c
         # 第二步：再修改BBR配置
         if [ "${{ github.event.inputs.BBR }}" = "true" ]; then
           echo "启用 BBR..."
