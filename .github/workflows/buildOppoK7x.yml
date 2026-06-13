@@ -14,6 +14,11 @@ on:
         description: "是否应用 RKSU 内核 Patch（按需开启）(仅4.14等内核）"
         required: false
         default: false
+      KERNEL_REPO:
+        type: string
+        description: "自定义内核源码仓库地址（留空使用kernel_4.14_MT6853仓库）"
+        required: false
+        default: "https://github.com/sanba0519/android_kernel_4.14_MT6853.git"
     
 jobs:
   build:
@@ -51,7 +56,11 @@ jobs:
     - name: 下载内核源码
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
-        git clone -b RKSU --single-branch https://github.com/sanba0519/android_kernel_4.14_MT6853.git android-kernel
+        USER_REPO="${{ github.event.inputs.KERNEL_REPO }}"
+        if [ -z "$USER_REPO" ];then
+        USER_REPO="https://github.com/sanba0519/android_kernel_4.14_MT6853.git"
+        fi
+        git clone -b RKSU --single-branch "$USER_REPO" android-kernel
         cd android-kernel
 
     - name: 打patch
@@ -74,7 +83,7 @@ jobs:
         rm -rf KernelSU
         curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s main
                
-    - name: 设置ccache缓存
+    - name: 设置cache缓存
       uses: hendrikmuhs/ccache-action@v1.2
       with:
         key: build-kernel-mido-kernel
