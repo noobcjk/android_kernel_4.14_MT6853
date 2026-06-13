@@ -96,8 +96,6 @@ jobs:
       with:
         key: build-kernel-mido-kernel
         max-size: 3G
-
- 
     - name: 配置环境并编译内核
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
@@ -105,7 +103,16 @@ jobs:
         export ARCH=arm64
         export SUBARCH=arm64
 
-        # 添加BBR
+        # 读取自定义defconfig
+        TARGET_DEFCFG="${{ github.event.inputs.DEFCONFIG }}"
+
+        export KBUILD_BUILD_HOST=coolapk@sanba
+        export KBUILD_BUILD_USER=GitHub@sanba0519
+
+        # 第一步：先生成 out/.config（必须放最前面！）
+        make -s -j$(nproc --all) O=out ARCH=arm64 $TARGET_DEFCFG
+
+        # 第二步：再修改BBR配置
         if [ "${{ github.event.inputs.BBR }}" = "true" ]; then
           echo "启用 BBR..."
           ./scripts/config --file out/.config \
@@ -116,12 +123,9 @@ jobs:
           echo "不启用 BBR..."
         fi
 
-        cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-        export PATH=$GITHUB_WORKSPACE/kernel_workspace/clang-aosp/bin:$GITHUB_WORKSPACE/kernel_workspace/gcc64/bin:$GITHUB_WORKSPACE/kernel_workspace/gcc32/bin:$PATH
-        export KBUILD_BUILD_HOST=coolapk@sanba
-        export KBUILD_BUILD_USER=GitHub@sanba0519
-        make -s -j$(nproc --all) O=out ARCH=arm64 $TARGET_DEFCFG
+        # 第三步：完整编译
         make -j$(nproc --all) CC="ccache clang" O=out ARCH=arm64 CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILE_ARM32=arm-linux-androideabi- LD=ld.lld
+
                 
     - name: 制作Anykernel3卡刷包
       run: |
