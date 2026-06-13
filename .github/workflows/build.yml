@@ -113,7 +113,7 @@ jobs:
         make -s -j$(nproc --all) O=out ARCH=arm64 $TARGET_DEFCFG
         # 关键：关闭Perf Events，消除 trace_event_perf.c 编译
         ./scripts/config --file out/.config --disable CONFIG_PERF_EVENTS
- make O=out olddefconfig
+        make O=out olddefconfig
         # 第二步：再修改BBR配置
         if [ "${{ github.event.inputs.BBR }}" = "true" ]; then
           echo "启用 BBR..."
