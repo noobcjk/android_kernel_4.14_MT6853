@@ -1,4 +1,4 @@
-name: 构建 Recovery
+name: 构建TWRP Recovery（编译TWRP 步骤二）
 
 on:
   workflow_dispatch:
